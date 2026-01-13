@@ -1,26 +1,39 @@
-import type { Information } from "lib/schemas/information";
+"use client"
+import { useEffect, useState } from 'react'
+import type { ListItem } from "lib/schemas/ListItem";
+import List from "@/components/List";
 
 export default function Body() {
-    const oka = {
-      id: 1,
-      title: 'Random number: ',
-      hash: 'abc123'
-    }
+  const [list, setList] = useState<ListItem[]>([])
+  useEffect(() => {
+    const randomWords = ['alpha', 'blue', 'cat', 'dog', 'elephant'];
+    const getRandomWord = () => randomWords[Math.floor(Math.random() * randomWords.length)];
+    const getRandomVal = (num: number) => Math.floor(Math.random() * num);
 
-    const test = (info: Information) : Information => {
-      return {...info, title: info.title + Math.random() * 10}
+    const getRandomWords = (num: number) : string => {
+      let str = '';
+      for(let i = 0; i < num; i ++) {
+        str += `${getRandomWord()} `;
+      }
+      return str.slice(0, -1);
     }
+  
+    const listItems: ListItem[] = [];
+    for(let i = 0; i < 1000; i ++) {
+      const newListItem = {
+        id: i,
+        title: getRandomWords(getRandomVal(3) + 1),
+        description: getRandomWords(getRandomVal(20) + 5)
+      } as ListItem;
+      listItems.push(newListItem);
+    }
+    setList(listItems)
 
-    const one = test(oka)
-    const two = test(oka)
-    const three = test(oka)
-    const arr = [one,two,three]
+  }, [])
 
     return (
       <div className="body">
-        {arr.map((item, i) => {
-          return (<div key={i}>{item.title}</div>)
-        })}
+          <List list={list}/>
       </div>
     );
   }
