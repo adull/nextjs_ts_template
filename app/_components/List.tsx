@@ -1,11 +1,17 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import type { ListItem } from "lib/schemas/ListItem";
 import { Item } from "@/components/Item"
+import { ListItemComponent } from '@/components/ListItemComponent';
 
 interface Props {
     list: ListItem[]
 }
 
+
+interface ButtonProps {
+    onClick: (event, i: number) => void
+    label: string
+}
 
 export default function List({ list }: Props) {
     const listRef = useRef(null);
@@ -32,7 +38,9 @@ export default function List({ list }: Props) {
         setVisibleItems(itemsToShow)
     }
 
-
+    const onClick = (e, i) => {
+        alert(i)
+    }
 
     return (
       <div 
@@ -40,7 +48,18 @@ export default function List({ list }: Props) {
         ref={listRef} onScroll={scrollFn}>
             <div style={{height: ELEM_HEIGHT * list.length}}>
                 {visibleItems.map((item, i) => {
-                    return <div className="absolute w-full" style={{top: item.id * (ELEM_HEIGHT)}} key={i}><Item item={item} height={ELEM_HEIGHT} /></div>
+
+                    const NewItem = memo(function Button ({onClick, label}: ButtonProps) {
+                        return <button onClick={onClick}>{label}</button>
+                    }) 
+                    return (
+                        <div className="absolute w-full" 
+                             style={{top: item.id * (ELEM_HEIGHT)}} key={i}
+                        >
+                            {/* <Item item={item} height={ELEM_HEIGHT} /> */}
+                            <NewItem onClick={(e) => onClick(e, i)} label={item.title} />
+                        </div>
+                    )
                 })}
             </div>
       </div>
